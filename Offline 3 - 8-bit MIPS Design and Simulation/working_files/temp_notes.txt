@@ -1,0 +1,129 @@
+assembler
+
+vector<string> opcode_list
+append serially from our group instruction
+
+read lines from the asm file.
+first word match with opcode_list. that operation.
+also, the order value, int, convert to binary. this is the 4 bit opcode.
+every line is instruction_count + 1.
+
+vector<dict("label_name", instruction_no)> jump_label_list
+when a jump instruction found (jump, beq, bneq) append in this list if not already here. with -1 instruction_no
+
+and when line first word doesnt match with any opcode_list element, its a label. 
+store it in labels (if already there with -1 as instruction_no, update instruction_no), with instruction_no. (this line is not counted as instruction. so no increment of instruction_count)
+
+vector<string> register_list
+in the instructions when register used check with this list, and put that number in binary. 4 bit register_address. (if zero is used as destination, error.)
+
+lastly replace the labels with binary(instruction_no).(if -1 error.)
+
+
+
+
+A Arithmetic R add
+B Arithmetic I addi
+C Arithmetic R sub
+D Arithmetic I subi
+E Logic R and
+F Logic I andi
+G Logic R or
+H Logic I ori
+I Logic R sll
+J Logic R srl
+K Logic R nor
+L Memory I sw
+M Memory I lw
+N Control-conditional I beq
+O Control-conditional I bneq
+P Control-unconditional J j
+
+
+
+
+
+add
+nor
+and
+ori
+j
+subi
+andi
+bneq
+addi
+sub
+beq
+sw
+or
+lw
+srl
+sll
+
+
+$zero
+$t0
+$t1
+$t2
+$t3
+$t4
+
+
+
+
+1001
+1101
+1081
+1940
+0002
+1840
+1880
+0048
+1800
+1041
+0044
+0A00
+10C1
+1830
+1581
+1541
+
+
+
+addi $t0, $zero, 5 //t0=5
+addi $t1, $zero, 10 //t1=10
+addi $t2, $zero, 15 //t2=15
+addi $t3, $zero, -25 //t3=231
+addi $t4, $zero, -120 //t4=136
+subi $t4, $t4, -125 //t4=5
+add $t4, $t3, $t2  //t4=246
+label0:
+beq $t0, $t1, label1 //branch will not be executed 
+sub $t1, $t1, $t0 //t1=5
+j label0 //unconditional jump
+label1:
+bneq $t0, $t1, label0 //branch will not be executed
+addi $t0, $zero, -25 //t0=231
+bneq $t0, $t1, label2 //branch will not be executed 
+addi $t0, $zero, -25 //t0=231
+addi $t0, $zero, -25 //t0=231
+label2:
+sub $t3, $t4, $t2 //t3=231
+sll $t4, $t0, 1 //t4=10
+srl $t3, $t2, 2 //t3=3
+or $t4, $t1, $t0     //t4= 0000 0101 or 1110 0111 = 1110 0111 = 231
+nor $t1, $t4, $t3    //t1 = 1110 0111 nor 0000 0011 = 0001 1000 = 24
+sw $t0, 3($t1)        //mem[$t1+3] = mem[3] = 231
+lw $t1, 3($t1)   //mem[$t1+3] = mem[3] = 24
+lw $t2, 3($t1)   //mem[$t1+3] = mem[3] = 15
+and $t2, $t3, $t0 //t2 = 0000 0011 and 1110 0111 = 0000 0011 = 3
+andi $t2, $t3, 111 //t2 = 0000 0011 and 0110 1111 = 0000 0011 = 3
+ori $t2, $t3, 111 //t2 = 0000 0011 or 0110 1111 = 0110 1111 = 111
+subi $sp, $sp, 1 //
+sw $t1, 0($sp)
+subi $sp, $sp, 1
+sw $t0, 0($sp)
+lw $t1, 0($sp)
+addi $sp, $sp, 1
+lw $t0, 0($sp)
+addi $sp, $sp, 1
